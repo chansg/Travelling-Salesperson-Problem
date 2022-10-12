@@ -1,8 +1,7 @@
-import java.util.ArrayList;
-
 public class Main {
 
     public static void main(String[] args) {
+        Reader r = new Reader();
         TSP tsp = new TSP();
 
         /* 3. Evaluation Function */
