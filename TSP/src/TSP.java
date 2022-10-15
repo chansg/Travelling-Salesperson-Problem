@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -22,6 +23,10 @@ public class TSP {
     };
 
     public TSP() {
+    }
+
+    public TSP(int[] id, double[][] coords) {
+
     }
 
     public int getCostOfRoute(char[] route){
@@ -48,5 +53,11 @@ public class TSP {
         }
 
         return randomRoute;
+    }
+
+    public void getRandomRouteCost() {
+        char[] randomRoute = this.getRandomRoute();
+        int cost = getCostOfRoute(randomRoute);
+        System.out.println("Route " + Arrays.toString(randomRoute) + ": " + cost);
     }
 }
