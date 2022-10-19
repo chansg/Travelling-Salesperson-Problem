@@ -5,37 +5,30 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class Loader {
-
-    private int[] id = new int[16];
-    private double[][] coords;
+    private ArrayList<String> data = new ArrayList<>();
 
     public Loader() {
         load();
     }
 
     public void load() {
-        ArrayList<String> temp = new ArrayList<>();
-
+        /* read from the file and store values in the array */
         try {
             BufferedReader br = new BufferedReader(new FileReader("ulysses16.csv"));
             String line;
 
             while((line = br.readLine()) != null) {
-                temp.add(line);
+                data.add(line);
             }
+            br.close();
         } catch(FileNotFoundException e) {
             e.printStackTrace();
         } catch(IOException e) {
             e.printStackTrace();
         }
+    }
 
-        for(int i = 0; i < temp.size(); i++) {
-            String line = temp.get(i);
-            String[] values = line.split(",");
-            id[i] = Integer.valueOf(values[0]);
-            Double.valueOf(values[1]);
-            Double.valueOf(values[2]);
-     
-        }
+    public ArrayList<String> getData() {
+        return data;
     }
 }

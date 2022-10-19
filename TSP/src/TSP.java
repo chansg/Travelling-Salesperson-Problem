@@ -5,6 +5,8 @@ import java.util.Random;
 
 public class TSP {
     private final int N = 4;
+    private int[] id;
+    private double[][] coords;
 
     Random rnd = new Random();
 
@@ -22,11 +24,10 @@ public class TSP {
         {35, 34, 12, 0}
     };
 
-    public TSP() {
-    }
+    public TSP() {}
 
-    public TSP(int[] id, double[][] coords) {
-
+    public TSP(ArrayList temp) {
+        arrayListToDouble(temp);
     }
 
     public int getCostOfRoute(char[] route){
@@ -59,5 +60,25 @@ public class TSP {
         char[] randomRoute = this.getRandomRoute();
         int cost = getCostOfRoute(randomRoute);
         System.out.println("Route " + Arrays.toString(randomRoute) + ": " + cost);
+    }
+
+    /* convert input to usable format */
+    private void arrayListToDouble(ArrayList temp) {
+        /* initialize variables */
+        id = new int[temp.size()];
+        coords = new double[temp.size()][2];
+
+        /* retrieve values from array and populate coords and id variables */
+        for(int i = 0; i < temp.size(); i++) {
+            String line = temp.get(i).toString();
+            String[] values = line.split(","); // by column
+
+            id[i] = Integer.valueOf(values[0]);
+
+            for(int j = 0; j < temp.size(); j++) {
+                coords[i][0] = Double.parseDouble(values[1]);
+                coords[i][1] = Double.parseDouble(values[2]);
+            }
+        }
     }
 }
