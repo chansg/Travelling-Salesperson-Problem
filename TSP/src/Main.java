@@ -9,5 +9,8 @@ public class Main {
         //TSP tsp = new TSP();
         /* 4. Random Routes */
         //tsp.getRandomRouteCost();
+
+        /* Random Search & CPU-time-based termination */
+        tsp.randomSearch(1000);
     }
 }

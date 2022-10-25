@@ -26,6 +26,7 @@ public class TSP {
 
     public TSP() {}
 
+    /* Todo week-1 find the distance between coordinates from csv file.  */
     public TSP(ArrayList temp) {
         arrayListToDouble(temp);
     }
@@ -80,5 +81,9 @@ public class TSP {
                 coords[i][1] = Double.parseDouble(values[2]);
             }
         }
+    }
+
+    public void randomSearch(int seconds) {
+
     }
 }
