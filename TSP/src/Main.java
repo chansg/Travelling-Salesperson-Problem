@@ -1,16 +1,21 @@
+import java.util.ArrayList;
+
 public class Main {
 
     public static void main(String[] args) {
         /* 5. File ulysses16.csv */
         Loader loader = new Loader();
+
+        /* Generate TSP instance */
         TSP tsp = new TSP(loader.getData());
 
-        /* No parameters will use the default graph and cities. */
-        //TSP tsp = new TSP();
-        /* 4. Random Routes */
-        //tsp.getRandomRouteCost();
+        /* 4. Random Routes Using Graph */
+//        System.out.println("Route " + Arrays.toString(tsp.getRandomRoute()) + ": " + tsp.getCostOfRoute(tsp.getRandomRoute()));
 
-        /* Random Search & CPU-time-based termination */
-        tsp.randomSearch(1000);
+        /* ----- Local Search -----  */
+        /* todo Running localsearch and random search together can alter the global variable */
+//        tsp.randomSearch(5);
+        tsp.localSearch(2);
+
     }
 }
