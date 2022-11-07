@@ -3,11 +3,9 @@ import java.sql.SQLOutput;
 import java.util.*;
 
 public class TSP {
-    private final int N = 4;
+    private final int N = 4; // graph size
     private int[] id;
     private double[][] coords;
-
-    Random rnd = new Random();
 
     ArrayList<Character> cities = new ArrayList<>(N) {{
         add('A');
@@ -15,6 +13,10 @@ public class TSP {
         add('C');
         add('D');
     }};
+
+    ArrayList<Integer> route = new ArrayList<>();
+
+    Random random = new Random();
 
     int[][] graph = {
         {0, 20, 42, 35},
@@ -25,15 +27,95 @@ public class TSP {
 
     public TSP() {}
 
-    public TSP(ArrayList<String> data) {
-        arrayListToDouble(data);
+    public TSP(String file) {
+        Loader loader = new Loader(file);
+
+        arrayListToDouble(loader.getData());
+        route = getRandomRoute();
+    }
+
+    public void geneticAlgorithm(int g, int populationSize) {
+        final int POPULATION_SIZE = populationSize;
+        System.out.println("Genetic Algorithm is running...");
+        System.out.println("Population size: " + POPULATION_SIZE);
+        int generation = 0; // survivor selection (age-based)
+        /* Initialising first route */
+        ArrayList<Integer> bestRoute = new ArrayList<Integer>(route);
+
+        /* populate ArrayList with routes */
+        ArrayList<ArrayList<Integer>> population = new ArrayList<>(POPULATION_SIZE);
+        ArrayList<ArrayList<Integer>> offsprings = new ArrayList<>(POPULATION_SIZE);
+        for(int i = 0; i < POPULATION_SIZE; i++) {
+            population.add(getRandomRoute());
+        }
+
+        /* Parent selection by tournament */
+        for(ArrayList<Integer> s : population) {
+            double currentCost = getCostOfRoute(s);
+            double bestCost = getCostOfRoute(bestRoute);
+            if(currentCost < bestCost) {
+                bestRoute = s;
+            }
+        }
+        System.out.println("Generation [" + generation + "]: " + bestRoute + ", " + getCostOfRoute(bestRoute));
+
+        // todo evolutionary algorithm
+        for(int i = 0; i < g; i++) {
+            offsprings.clear();
+            /* parent & survivor selection by tournament */
+            ArrayList<Integer> parent1 = parentSelection(populationSize, population);
+            ArrayList<Integer> parent2 = population.get(i);
+
+            for(int j = 0; j < POPULATION_SIZE; j++) {
+                /* recombination */
+                ArrayList<Integer> offspring = orderOneCrossover(parent1, parent2);
+                /* mutate the resulting offspring. */
+                offspring = twoOptSwap(offspring);
+                /* evaluate new candidates; */
+                double currentCost = getCostOfRoute(offspring);
+                double bestCost = getCostOfRoute(bestRoute);
+
+                if(currentCost < bestCost) {
+                    bestRoute = offspring;
+                }
+
+                /* select individuals for the next generation */
+                offsprings.add(j, offspring);
+            }
+
+            /* Generational model (age-based) */
+            population.clear();
+            population.addAll(offsprings);
+            generation += 1;
+
+            System.out.println("Generation [" + generation + "]: " + bestRoute + ", " + getCostOfRoute(bestRoute));
+        }
+    }
+
+    public ArrayList<Integer> parentSelection(int populationSize, ArrayList<ArrayList<Integer>> population) {
+        ArrayList<ArrayList<Integer>> pop = new ArrayList<ArrayList<Integer>>(populationSize);
+        ArrayList<Integer> parent = new ArrayList<Integer>();
+        double bestCost = getCostOfRoute(getRandomRoute());
+
+        for(int i = 0; i < populationSize; i++) {
+            pop.add(i, getRandomRoute());
+        }
+
+        for(ArrayList<Integer> p : population) {
+            double currentCost = getCostOfRoute(p);
+            if(currentCost < bestCost) {
+                bestCost = currentCost;
+                parent = p;
+            }
+        }
+        return parent;
     }
 
     public void randomSearch(int seconds) {
         long timer = System.currentTimeMillis() + seconds * 1000;
 
         /* Initialising first route */
-        ArrayList<Integer> bestRoute = getRandomRoute();
+        ArrayList<Integer> bestRoute = new ArrayList<>(route);
         double bestCost = this.getCostOfRoute(bestRoute);
 
         /* CPU-time-based termination */
@@ -54,7 +136,7 @@ public class TSP {
     public void localSearch(int seconds) {
         long timer = System.currentTimeMillis() + seconds * 1000;
 
-        ArrayList<Integer> bestRoute = getRandomRoute();
+        ArrayList<Integer> bestRoute = new ArrayList<>(route);
         double bestCost = this.getCostOfRoute(bestRoute);
 
         /* CPU-time-based termination */
@@ -76,10 +158,41 @@ public class TSP {
         System.out.println("Local Search: " + bestRoute + " cost: " + getCostOfRoute(bestRoute));
     }
 
-    public ArrayList<Integer> twoOptSwap(ArrayList<Integer> route) {
-        ArrayList<Integer> neighbourhood = new ArrayList<>();
+    public ArrayList<Integer> orderOneCrossover(ArrayList<Integer> parent1, ArrayList<Integer> parent2) {
+        int size = parent1.size();
 
-        // swapping the edges
+        /* Copy randomly selected list from first parent */
+        int n1 = random.nextInt(size);
+        int n2 = random.nextInt(size);
+        int start = Math.min(n1, n2);
+        int end = Math.max(n1, n2);
+
+        ArrayList<Integer> child = new ArrayList<>();
+        child.addAll(parent1.subList(start, end));
+
+        int index = 0;
+        int tour = 0;
+        for(int i = 0; i < size; i++) {
+            /* get the index of the current city */
+            index = (end + i) % size;
+
+            /* get the city at the current index in each of the two parent tours */
+            tour = parent2.get(index);
+
+            /* if child does not already contain the current city in tour 2, add it. */
+            if(!child.contains(tour)) {
+                child.add(tour);
+            }
+        }
+
+        /* rotate the lists so the original slice is in the same place as the parent tours. */
+        Collections.rotate(child, start);
+
+        return child;
+    }
+
+    public ArrayList<Integer> twoOptSwap(ArrayList<Integer> route) {
+        ArrayList<Integer> neighbourhood = new ArrayList<>(route);
         for(int i = 1; i < route.size()-1; i++) {
             for(int j = i + 1; j < route.size(); j++) {
                 ArrayList<Integer> tempRoute = new ArrayList<>(route);
@@ -89,8 +202,6 @@ public class TSP {
                 int temp = route.get(i);
                 tempRoute.set(i, route.get(j));
                 tempRoute.set(j, temp);
-//                neighbourhood = tempRoute;
-
                 double newCost = getCostOfRoute(tempRoute);
                 if(newCost < previousCost) {
                     neighbourhood = tempRoute;
@@ -101,6 +212,7 @@ public class TSP {
             }
         }
 //        System.out.println(neighbourhood + " shortest route cost: " + getCostOfRoute(neighbourhood));
+
         return neighbourhood;
     }
 
@@ -127,6 +239,7 @@ public class TSP {
     }
 
     public char[] getRandomRouteFromGraph() {
+        Random rnd = new Random();
         char[] randomRoute = new char[N];
         List<Character> c = new ArrayList<Character>(cities);
 
@@ -148,7 +261,7 @@ public class TSP {
     }
 
     /* convert input to usable format */
-    private void arrayListToDouble(ArrayList temp) {
+    private void arrayListToDouble(ArrayList<String> temp) {
         /* initialize variables */
         id = new int[temp.size()];
         coords = new double[temp.size()][2];
@@ -158,7 +271,7 @@ public class TSP {
             String line = temp.get(i).toString();
             String[] values = line.split(","); // by column
 
-            id[i] = Integer.valueOf(values[0]);
+            id[i] = Integer.parseInt(values[0]);
 
             for(int j = 0; j < temp.size(); j++) {
                 coords[i][0] = Double.parseDouble(values[1]);

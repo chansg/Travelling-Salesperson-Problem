@@ -7,14 +7,14 @@ import java.util.ArrayList;
 public class Loader {
     private ArrayList<String> data = new ArrayList<>();
 
-    public Loader() {
-        load();
+    public Loader(String file) {
+        load(file);
     }
 
-    public void load() {
+    public void load(String filePath) {
         /* read from the file and store values in the array */
         try {
-            BufferedReader br = new BufferedReader(new FileReader("ulysses16.csv"));
+            BufferedReader br = new BufferedReader(new FileReader(filePath));
             String line;
 
             while((line = br.readLine()) != null) {
