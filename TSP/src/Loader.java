@@ -16,9 +16,13 @@ public class Loader {
         try {
             BufferedReader br = new BufferedReader(new FileReader(filePath));
             String line;
-
+            String line1 = br.readLine();
+            String line2 = br.readLine();
+            line1 = null;
+            line2 = null;
             while((line = br.readLine()) != null) {
                 data.add(line);
+
             }
             br.close();
         } catch(FileNotFoundException e) {
@@ -31,4 +35,5 @@ public class Loader {
     public ArrayList<String> getData() {
         return data;
     }
+
 }

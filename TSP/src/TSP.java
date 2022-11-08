@@ -64,7 +64,7 @@ public class TSP {
             offsprings.clear();
             /* parent & survivor selection by tournament */
             ArrayList<Integer> parent1 = parentSelection(populationSize, population);
-            ArrayList<Integer> parent2 = population.get(i);
+            ArrayList<Integer> parent2 = population.get(random.nextInt(populationSize));
 
             for(int j = 0; j < POPULATION_SIZE; j++) {
                 /* recombination */

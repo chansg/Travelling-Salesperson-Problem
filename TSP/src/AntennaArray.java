@@ -117,4 +117,41 @@ public class AntennaArray {
         }
         return 20.0*Math.log(Math.abs(sum));
     }
+
+    /* todo lab starts here */
+    public double[] randomSearch(int iterations) {
+        double[] bestSolution = generateRandomSolution();
+        double bestCost = evaluate(bestSolution);
+
+        for (int i = 0; i < iterations; i++) {
+            double[] solution = generateRandomSolution();
+            double cost = evaluate(solution);
+
+            if (cost < bestCost) {
+                bestCost = cost;
+                bestSolution = solution;
+            }
+        }
+
+        return bestSolution;
+    }
+
+    public double[] generateRandomSolution() {
+        Random rand = new Random();
+        boolean isValid = false;
+        double upper = n_antennae / 2.0;
+        double[] solution = new double[n_antennae];
+        solution[n_antennae-1] = upper;
+
+        while(!isValid) {
+            for (int i = 0; i < n_antennae-1; i++) {
+                solution[i] = rand.nextDouble() * upper;
+            }
+
+            isValid = is_valid(solution);
+        }
+
+        Arrays.sort(solution);
+        return solution;
+    }
 }

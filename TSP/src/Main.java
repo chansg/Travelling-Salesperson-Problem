@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Main {
 
@@ -6,18 +7,23 @@ public class Main {
         /* 5. File ulysses16.csv */
         /* Generate TSP instance */
         TSP tsp = new TSP("ulysses16.csv");
-        AntennaArray antenna = new AntennaArray(3, 90);
 
-
-        /* 4. Random Routes Using Graph */
+        /* ----- Graph ----- */
 //        System.out.println("Route " + Arrays.toString(tsp.getRandomRoute()) + ": " + tsp.getCostOfRoute(tsp.getRandomRoute()));
 
-        /* ----- Local Search -----  */
-        /* todo Running localsearch and random search together can alter the global variable */
+        /* ----- TSP -----  */
 //        tsp.randomSearch(5);
 //        tsp.localSearch(2000);
+//        tsp.geneticAlgorithm(10, 50); // generation can not exceed POPULATION_SIZE
 
-        /* generation can not exceed POPULATION_SIZE */
-        tsp.geneticAlgorithm(20, 1000);
+        /* ----- Antenna Array -----  */
+        AntennaArray antenna = new AntennaArray(5, 90);
+
+        Swarm particleSwarm = new Swarm(antenna, 20);
+        double[] solution = particleSwarm.search(100);
+
+        System.out.println("solution: " + Arrays.toString(solution));
+        System.out.println("solution cost: " + antenna.evaluate(solution));
+
     }
 }
