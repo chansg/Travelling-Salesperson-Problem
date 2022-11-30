@@ -31,7 +31,6 @@ public class Particle {
         }
     }
 
-    /* todo error handling using invisible wall */
     public double[] calculateNewVelocity(double[] gbest) {
         Random rand = new Random();
         double[] newVelocity = new double[velocity.length];

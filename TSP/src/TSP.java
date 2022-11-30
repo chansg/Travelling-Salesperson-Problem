@@ -3,7 +3,7 @@ import java.sql.SQLOutput;
 import java.util.*;
 
 public class TSP {
-    private final int N = 4; // graph size
+    private final int N = 4; // number of cities
     private int[] id;
     private double[][] coords;
 
@@ -32,6 +32,7 @@ public class TSP {
 
         arrayListToDouble(loader.getData());
         route = getRandomRoute();
+//        System.out.println(route);
     }
 
     public void geneticAlgorithm(int g, int populationSize) {
@@ -59,7 +60,6 @@ public class TSP {
         }
         System.out.println("Generation [" + generation + "]: " + bestRoute + ", " + getCostOfRoute(bestRoute));
 
-        // todo evolutionary algorithm
         for(int i = 0; i < g; i++) {
             offsprings.clear();
             /* parent & survivor selection by tournament */
@@ -127,10 +127,10 @@ public class TSP {
                 bestCost = currentCost;
                 bestRoute = currentRoute;
             }
-//            System.out.println(currentRoute + " tour cost: " + currentCost);
+            System.out.println("Current tour" + currentRoute + " tour cost: " + currentCost);
         }
 
-        System.out.println("Random Search: " + bestRoute + " cost: " + bestCost);
+        System.out.println("Random Search best tour: " + bestRoute + " cost: " + bestCost);
     }
 
     public void localSearch(int seconds) {
